@@ -1,0 +1,300 @@
+﻿@model IEnumerable<Datos.DataContext.Producto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<h1>Registro de Productos</h1>
+<br />
+<p>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#nuevoProductoModal">
+  <i class="fas fa-plus-circle"></i> Nuevo Producto
+</button>
+</p>
+
+<div class="modal fade" id="nuevoProductoModal" tabindex="-1" role="dialog" aria-labelledby="nuevoProductoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="nuevoProductoModalLabel">Nuevo producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form asp-action="Insertar" id="nuevoProducto">
+          <div class="form-group">
+            <label for="product-name">Nombre</label>
+            <input type="text" class="form-control" id="product-name" name="Nombre" placeholder="Ingresa el nombre del producto">
+          </div>
+          <div class="form-group">
+            <label for="product-provider">Proveedor</label>
+            <input type="text" class="form-control" id="product-provider" name="Proveedor" placeholder="Ingresa el proveedor del producto">
+          </div>
+          <div class="form-group">
+            <label for="product-price">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="product-price" name="Precio" placeholder="Ingresa el precio del producto">
+          </div>
+          <div class="form-group">
+            <label for="product-quantity">Cantidad</label>
+            <input type="number" class="form-control" id="product-quantity" name="Cantidad" placeholder="Ingresa la cantidad de productos">
+          </div>
+          <div class="form-group">
+            <label for="product-date">Fecha de Vencimiento</label>
+            <input type="date" class="form-control" name="FechaV" id="product-date">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </form>
+        @if (ViewBag.ErrorMessage != null)
+        {
+             <div class="alert alert-danger">
+               @ViewBag.ErrorMessage
+            </div>
+        }
+      </div> 
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProductoModalLabel">Editar Producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form asp-action="Actualizar" method="post" id="editarProducto">
+          <div class="form-group">
+            <input type="hidden" class="form-control" id="edit-id" name="IdProducto" >
+          </div>
+          
+            <div class="form-group">
+            <label for="product-name">Nombre</label>
+            <input type="text" class="form-control" id="edit-nombre" name="Nombre" >
+          </div>
+          <div class="form-group">
+            <label for="product-provider">Proveedor</label>
+            <input type="text" class="form-control" id="edit-proveedor" name="Proveedor" >
+          </div>
+          <div class="form-group">
+            <label for="product-price">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="edit-precio" name="Precio" >
+          </div>
+          <div class="form-group">
+            <label for="product-quantity">Cantidad</label>
+            <input type="number" class="form-control" id="edit-cantidad" name="Cantidad" >
+          </div>
+          <div class="form-group">
+            <label for="product-date">Fecha de Vencimiento</label>
+            <input type="date" class="form-control" name="FechaV" id="edit-fecha">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Editar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </form>
+        @if (ViewBag.ErrorMessage != null)
+        {
+             <div class="alert alert-danger">
+               @ViewBag.ErrorMessage
+            </div>
+        }
+      </div> 
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="verProductModal" tabindex="-1" role="dialog" aria-labelledby="verProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verProductoModalLabel">Ver Producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="verProducto">
+            <div class="form-group">
+            <label for="product-name">Nombre</label>
+            <input  type="text" class="form-control" id="ver-nombre" name="Nombre" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label for="product-provider">Proveedor</label>
+            <input type="text" class="form-control" id="ver-proveedor" name="Proveedor" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label for="product-price">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="ver-precio" name="Precio" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label for="product-quantity">Cantidad</label>
+            <input type="number" class="form-control" id="ver-cantidad" name="Cantidad" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label for="product-date">Fecha de Vencimiento</label>
+            <input type="date" class="form-control" name="FechaV" id="ver-fecha" readonly disabled>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </form>
+      </div> 
+    </div>
+  </div>
+</div>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr align="center">
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Proveedor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Precio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cantidad)
+            </th>
+              <th>
+                @Html.DisplayNameFor(model => model.FechaV)
+            </th>
+            <th>
+                <a>Opciones</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+{
+    
+
+        @foreach (var item in Model)
+        {
+            <tr align="center">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Proveedor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cantidad)
+                </td>
+                <td>
+                    @{
+                    var fecha = item.FechaV.ToShortDateString();
+                        }
+
+                    @Html.DisplayFor(modelItem => fecha)
+
+                </td>
+                <td align="center">
+
+                    <a type="submit" class="btn btn-secondary btn-edit" role="button" aria-pressed="true" product-id="@item.IdProducto" data-toggle="modal" data-target="#editProductModal">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </a>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <a type="submit" class="btn btn-info btn-ver" role="button" aria-pressed="true" producto-id="@item.IdProducto" data-toggle="modal" data-target="#verProductModal">
+                        <i class="fa fa-eye"></i> Ver
+                    </a>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <a type="submit" class="btn btn-danger btn-delete" role="button" aria-pressed="true" data-product-id="@item.IdProducto">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+
+                </td>
+            </tr>
+        }
+        }
+    </tbody>
+</table>
+
+<script>
+  $('.btn-delete').on('click', function (e) {
+    e.preventDefault(); // Previene el comportamiento por defecto del botón (redirigir a otra vista)
+
+    // Obtiene el ID del producto a eliminar
+     var productId = $(this).attr('data-product-id');
+
+    // Muestra una alerta que pregunta si quieres eliminar el producto
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      // Envía una solicitud DELETE al controlador
+      $.ajax({
+        type: 'DELETE',
+        url: '/Home/Eliminar/' + productId,
+        success: function (result) {
+          // Si se ha eliminado el producto con éxito, recarga la página
+          location.reload();
+        }
+      });
+    }
+  });
+
+  $('.btn-edit').click(function() {
+  var productId = $(this).attr('product-id');
+  $.ajax({
+    url: '/Home/Obtener/' + productId,
+    type: 'POST',
+    success: function(response) {
+        console.log(response);
+        console.log(Object.keys(response));
+      $('#edit-id').val(response.valor.idProducto);
+      $('#edit-nombre').val(response.valor.nombre);
+      $('#edit-proveedor').val(response.valor.proveedor);
+      $('#edit-precio').val(response.valor.precio);
+      $('#edit-cantidad').val(response.valor.cantidad);
+      var fecha = new Date(Date.parse(response.valor.fechaV));
+      $('#edit-fecha').val(fecha.toISOString().substring(0, 10));
+
+
+    }
+  });
+});
+
+$('.btn-ver').click(function() {
+  var productId = $(this).attr('producto-id');
+  $.ajax({
+    url: '/Home/Obtener/' + productId,
+    type: 'POST',
+    success: function(response) {
+        console.log(response);
+      $('#ver-nombre').val(2);
+      $('#ver-proveedor').val(response.valor.proveedor);
+      $('#ver-precio').val(response.valor.precio);
+      $('#ver-cantidad').val(response.valor.cantidad);
+      var fecha = new Date(Date.parse(response.valor.fechaV));
+      $('#ver-fecha').val(fecha.toISOString().substring(0, 10));
+    }
+  });
+});
+ 
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+

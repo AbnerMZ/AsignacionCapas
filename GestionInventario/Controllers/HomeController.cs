@@ -18,43 +18,18 @@ namespace GestionInventario.Controllers
 
         public async Task<IActionResult> Index()
         {
-            IQueryable<Producto> model = await _productoService.ObtenerTodos();
-            if (model == null)
-            {
-                return View();
-            }
-
-            return View(model);
+            var productos = await _productoService.ObtenerTodos();
+            
+            return View(productos);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Lista()
-        {
-            IQueryable<Producto> query = await _productoService.ObtenerTodos();
-
-            List<VMProducto> lista = query
-                                    .Select(c => new VMProducto() {
-                                        IdProducto = c.IdProducto,
-                                        Nombre = c.Nombre,
-                                        Proveedor = c.Proveedor,
-                                        Precio = c.Precio,
-                                        Cantidad = c.Cantidad,
-                                        FechaV = c.FechaV
-                                    }).ToList();
-
-            return StatusCode(StatusCodes.Status200OK, lista);
-        }
 
         [HttpPost]
         public async Task<IActionResult> Insertar([Bind("IdProducto,Nombre,Proveedor,Cantidad,Precio,FechaV")]Producto producto)
         {
             if (ModelState.IsValid)
             {
-
-                bool respuesta = await _productoService.Insertar(producto);
-
-           
-            
+                bool respuesta = await _productoService.Insertar(producto);           
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -62,8 +37,6 @@ namespace GestionInventario.Controllers
                 ViewBag.ErrorMessage = "Hubo un error al insertar el producto en la base de datos";
                 return View();
             }
-
-
         }
 
      
@@ -77,10 +50,7 @@ namespace GestionInventario.Controllers
             {
 
                 bool respuesta = await _productoService.Actualizar(producto);
-
                 return RedirectToAction("Index", "Home");
-
-
             }
             else
             {
@@ -95,21 +65,14 @@ namespace GestionInventario.Controllers
         [HttpDelete]
         public async Task<IActionResult> Eliminar(int id)
         {
-           
-
             bool respuesta = await _productoService.Eliminar(id);
-
-
             return StatusCode(StatusCodes.Status200OK, new { valor = respuesta });
         }
 
         [HttpPost]
         public async Task<IActionResult> Obtener(int id)
         {
-
-
             Producto respuesta = await _productoService.Obtener(id);
-
             return StatusCode(StatusCodes.Status200OK, new { valor = respuesta });
 
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Datos.Repositorio.ProductoRepository;
 
 namespace Datos.Repositorio
 {
@@ -13,6 +14,8 @@ namespace Datos.Repositorio
         Task<bool> Eliminar(int id);
         Task<TEntityModel> Obtener(int id);
         Task<IQueryable<TEntityModel>> ObtenerTodos();
+        Task<ProductosResultado> LlenarTabla(int OmitirRegistros, int CantidadRegistros, String ValorBuscado);
+
 
     }
 }

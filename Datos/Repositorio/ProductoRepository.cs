@@ -11,7 +11,7 @@ namespace Datos.Repositorio
     {
         private readonly InventarioDbContext _inventarioDbContext;
 
-        public ProductoRepository(InventarioDbContext context)           
+        public ProductoRepository(InventarioDbContext context)
         {
             _inventarioDbContext = context;
         }
@@ -20,7 +20,7 @@ namespace Datos.Repositorio
         {
             _inventarioDbContext.Productos.Update(modelo);
             await _inventarioDbContext.SaveChangesAsync();
-            return true;    
+            return true;
         }
 
         public async Task<bool> Eliminar(int id)
@@ -49,7 +49,26 @@ namespace Datos.Repositorio
             return query;
         }
 
+        public class ProductosResultado
+        {
+            public List<Producto> Productos { get; set; }
+            public int TotalRegistrosFiltrados { get; set; }
+        }
+        public async Task<ProductosResultado> LlenarTabla(int OmitirRegistros, int CantidadRegistros, String ValorBuscado)
+        {
+            List<Producto> lista = new List<Producto>();
+            IQueryable<Producto> queryProducto = _inventarioDbContext.Productos;//select * from empleado
+            int TotalRegistros = queryProducto.Count();
+            queryProducto = queryProducto
+                .Where(e => string.Concat(e.Nombre, e.Proveedor).Contains(ValorBuscado));
 
- 
+            // Total de registros ya filtrados.
+            int TotalRegistrosFiltrados = queryProducto.Count();
+            lista = queryProducto.Skip(OmitirRegistros).Take(CantidadRegistros).ToList();
+
+            return new ProductosResultado { Productos = lista, TotalRegistrosFiltrados = TotalRegistrosFiltrados };
+        }
+
+
     }
 }

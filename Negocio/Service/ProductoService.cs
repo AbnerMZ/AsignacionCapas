@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Datos.Repositorio.ProductoRepository;
+
+
 
 namespace Negocio.Service
 {
@@ -39,5 +42,15 @@ namespace Negocio.Service
         {
             return await _productRepo.ObtenerTodos();
         }
+
+        public async Task<ProductosResultado> LlenarTabla(int OmitirRegistros, int CantidadRegistros, String ValorBuscado)
+        {
+
+
+            return await _productRepo.LlenarTabla(OmitirRegistros, CantidadRegistros, ValorBuscado);
+        }
+
+
+
     }
 }

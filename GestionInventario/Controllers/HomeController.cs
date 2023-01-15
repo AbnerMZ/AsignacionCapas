@@ -23,6 +23,23 @@ namespace GestionInventario.Controllers
             return View(productos);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> ObtenerProducto() 
+        {
+            int NroPeticion = Convert.ToInt32(Request.Form["draw"].FirstOrDefault() ?? "0");
+            int CantidadRegistros = Convert.ToInt32(Request.Form["length"].FirstOrDefault() ?? "0");
+            int OmitirRegistros = Convert.ToInt32(Request.Form["start"].FirstOrDefault() ?? "0");
+            string ValorBuscado = Request.Form["search[value]"].FirstOrDefault() ?? "";
+            var consulta = await _productoService.LlenarTabla(OmitirRegistros, CantidadRegistros, ValorBuscado);
+            var listaProductos = consulta.Productos;
+            var Total = await _productoService.ObtenerTodos();
+            var TotalRegistros =Total.Count();
+            var TotalRegistrosFiltrados = consulta.TotalRegistrosFiltrados;
+
+            return Json(new{draw = NroPeticion,recordsTotal = TotalRegistros,recordsFiltered = TotalRegistrosFiltrados,data = listaProductos,});
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Insertar([Bind("IdProducto,Nombre,Proveedor,Cantidad,Precio,FechaV")]Producto producto)
